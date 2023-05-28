@@ -36,8 +36,8 @@
                                     <p class="text-xl text-white p-5 font-bold">
                                         {{ generated_question }}
                                     </p>
-                                    <p class="text-blue-400 p-5 select-none">
-                                        *Бот дурачок, он не понимает что говорит, на всякий случай проверяйте его ответы
+                                    <p class="text-blue-400 pb-5 px-5 select-none">
+                                        *Бот дурачок, он не понимает что говорит
                                     </p>
                                 </div>
                                 <v-btn v-if="copy_btn_status" class="mb-6" icon="mdi-check" variant="text"></v-btn>
@@ -48,8 +48,8 @@
                         </div>
                     </Transition>
 
-                    <v-text-field clearable v-model="question" label="Вопрос"></v-text-field>
-                    <v-text-field clearable v-model="answer" label="Ответ (в виде SQL запроса)"></v-text-field>
+                    <v-textarea clearable v-model="question" label="Вопрос"></v-textarea>
+                    <v-textarea clearable v-model="answer" label="Ответ (в виде SQL запроса)"></v-textarea>
                     <div class="text-lg">Сложность</div>
                     <v-slider :ticks="tickLabels" :min="1" :max="5" step="1" show-ticks="always" tick-size="4"
                         v-model="complexity"></v-slider>

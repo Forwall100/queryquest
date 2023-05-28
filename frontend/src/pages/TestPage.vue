@@ -1,5 +1,6 @@
-vgt<template>
+<template>
     <div>
+
         <div class="mt-28">
             <v-row justify="center">
                 <v-col cols="12" sm="8" md="8">
@@ -25,6 +26,51 @@ vgt<template>
                             </v-card-text>
                         </div>
                     </v-card>
+                    <v-card rounded="xl" color="white" class="mt-10">
+                        <div class="p-5">
+                            <v-card-title>
+                                <div class="flex justify-between align-middle text-center">
+                                    <h1 class="text-3xl font-black">📊 Статистика: </h1>
+                                </div>
+                            </v-card-title>
+                            <v-card-text>
+                                <div class="flex">
+                                    <v-table>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">
+                                                    Группа
+                                                </th>
+                                                <th class="text-left">
+                                                    Студент
+                                                </th>
+                                                <th class="text-left">
+                                                    Правильных ответов
+                                                </th>
+                                                <th class="text-left">
+                                                    Время ответа
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="item in results" :key="item.id">
+                                                <td>{{ item.expand.user_id.group }}</td>
+                                                <td>{{ item.expand.user_id.name }}</td>
+                                                <td>{{ item.correct_answers }} / {{ item.number_of_questions }}</td>
+                                                <td>{{ new Date(item.created).toLocaleString(undefined, { hour12: false })
+                                                }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </v-table>
+                                    <div class="w-1/3">
+                                        <Doughnut v-if="draw" id="my-chart-id" :options="chartOptions"
+                                            :data="chart_data" />
+                                    </div>
+                                </div>
+                            </v-card-text>
+                        </div>
+                    </v-card>
                 </v-col>
             </v-row>
         </div>
@@ -37,11 +83,16 @@ import { mapGetters } from 'vuex'
 import { emitter } from '../eventBus'
 import QuestionCard from "../components/QuestionCard.vue";
 import CreateQuestionBtn from "../components/CreateQuestionBtn.vue";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Doughnut } from 'vue-chartjs'
+
+ChartJS.register(ArcElement, Tooltip, Legend)
 
 export default {
     components: {
         QuestionCard,
-        CreateQuestionBtn
+        CreateQuestionBtn,
+        Doughnut
     },
     data() {
         return {
@@ -49,7 +100,13 @@ export default {
             questions: null,
             dialog: false,
             number_of_questions: 0,
-            results: []
+            results: [],
+            chartOptions: {
+                responsive: true,
+
+            },
+            draw: false,
+            chart_data: {}
         }
     },
     computed: {
@@ -67,17 +124,33 @@ export default {
             });
             this.number_of_questions = this.questions.length
         },
+        async fetch_chart_data(res) {
+            console.log(res)
+            this.chart_data = {
+                labels: Array.from(Array(res[0].number_of_questions + 1).keys(), x => (x).toString()),
+                datasets: [
+                    {
+                        backgroundColor: ['#3662E3', '#436CE5', '#2353E1', '#1A44C2', '#7D99ED', '#A8BBF3', '#13328D'],
+                        data: Array.from(Array(res[0].number_of_questions + 1).keys(), x => (x)).map(grade => res.map(result => result.correct_answers).filter(result => result === grade).length)
+                    }
+                ]
+            }
+        }
     },
     async mounted() {
         emitter.on('questionsUpdated', () => {
             this.fetch_questions()
         })
         this.fetch_questions()
-        
 
-        this.results = await pb.collection('results').getFullList({
-            filter: `user_id = "${this.teacher_id}"`,
-        });
+        const res = await pb.collection('results').getFullList({
+            sort: '-created',
+            expand: 'user_id, users.id'
+        })
+
+        this.results = res
+        this.fetch_chart_data(res)
+        this.draw = true
     }
 }
 </script>

@@ -13,7 +13,7 @@
                             </v-card-title>
                             <v-card-text>
                                 <transition-group name="slide">
-                                    <div v-for="test in tests">
+                                    <div v-for="test in tests" :key="test.id">
                                         <v-card v-if="!results.some(obj => obj.test_id == test.id)" elevation="0">
                                             <test-card :key="test.id" :teacher_id="currentUser.id" :id="test.id"
                                                 :title="test.title" :description="test.description"

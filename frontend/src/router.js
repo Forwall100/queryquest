@@ -13,7 +13,7 @@ const router = createRouter({
     { path: '/login', component: LoginPage },
     { path: '/test/:testId', component: TestPage, props: true },
     { path: '/test/solve/:testId', component: SolveTestPage, props: true },
-    { path: '/:pathMatch(.*)*', redirect: '/' }
+    { path: '/:pathMatch(.*)*', redirect: '/' },
   ]
 });
 
