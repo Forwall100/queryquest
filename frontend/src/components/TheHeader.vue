@@ -1,7 +1,7 @@
 <template>
     <div class="backdrop-blur-md bg-blue-700/40 text-white py-2 fixed z-50 w-full top-0 left-0 right-0">
         <div class="flex items-center justify-between px-4 py-2 mx-28">
-            <router-link to="/" class="text-2xl font-black">Query Quest</router-link>
+            <router-link to="/" class="text-2xl font-black">🔍🤔 Query Quest</router-link>
             <div v-if="!isLoggedIn" class="flex justify-center">
                 <router-link to="/register" class="mr-3">
                     <v-btn rounded="pill" color="white" variant="flat">Регистрация</v-btn>

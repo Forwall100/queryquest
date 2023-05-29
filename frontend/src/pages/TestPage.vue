@@ -26,7 +26,7 @@
                             </v-card-text>
                         </div>
                     </v-card>
-                    <v-card rounded="xl" color="white" class="mt-10">
+                    <v-card v-if="draw" rounded="xl" color="white" class="mt-10">
                         <div class="p-5">
                             <v-card-title>
                                 <div class="flex justify-between align-middle text-center">
@@ -145,12 +145,15 @@ export default {
 
         const res = await pb.collection('results').getFullList({
             sort: '-created',
-            expand: 'user_id, users.id'
+            expand: 'user_id, users.id',
+            filter: `test_id = "${this.test_id}"`
         })
 
-        this.results = res
-        this.fetch_chart_data(res)
-        this.draw = true
+        if (res.length > 0){
+            this.results = res
+            this.fetch_chart_data(res)
+            this.draw = true
+        }
     }
 }
 </script>
